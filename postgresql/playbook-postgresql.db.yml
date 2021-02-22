@@ -1,0 +1,14 @@
+- hosts: all
+  tasks:
+  - name: Copy northwind.sql to /home/demo directory 
+    copy:
+        src: northwind.sql
+        dest: /home/demo/northwind.sql
+
+  - name: Create demo database
+    shell: "sudo -u postgres psql northwind < /home/demo/northwind.sql"
+
+  - name: Select company_name from suppliers table from northwind database 
+    shell: "sudo -u postgres psql -d northwind -c 'SELECT company_name FROM suppliers limit 10';"
+
+

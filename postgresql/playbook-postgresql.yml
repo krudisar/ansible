@@ -1,0 +1,31 @@
+- hosts: all
+  tasks:
+  - name: Install Postgres
+    become: true
+    yum: name={{ item }} state=present
+    with_items:
+    - postgresql-server
+    - postgresql-contrib
+    - python-psycopg2
+
+  - name: Initialize database
+    become: true
+    shell: "postgresql-setup initdb"
+    args:
+        executable: /bin/bash
+
+  - name: Enable PostgreSQL
+    become: true
+    shell: "systemctl enable postgresql"
+
+  - name: Start PostgreSQL
+    become: true
+    shell: "systemctl start postgresql"
+
+  - name: Check if database is initiated and running 
+    shell: "sudo -u postgres psql -c 'SELECT version();'"
+ 
+  - name: Create demo database
+    become: true
+    become_user: postgres
+    postgresql_db: name=northwind encoding='UTF-8'  state=present
